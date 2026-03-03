@@ -1,0 +1,9 @@
+name: ghost-epoch-settlement
+version: "0.1.0"
+description: "Triggers sealed-bid auction via GHOST API (pure HTTP trigger)"
+trigger:
+  type: cron
+  schedule: "*/300 * * * * *"
+capabilities:
+  - confidential-http
+  - vault-don-secrets
