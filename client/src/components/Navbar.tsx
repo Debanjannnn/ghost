@@ -24,7 +24,7 @@ const Navbar = () => {
   const [moreOpen, setMoreOpen] = useState(false);
 
   return (
-    <header className="w-full border-b border-border">
+    <header className="w-full">
       <div className="w-full flex items-center justify-between px-10 py-3">
         {/* Left section: Logo + Nav */}
         <div className="flex items-center gap-1">
@@ -37,7 +37,7 @@ const Navbar = () => {
               height={28}
               className="rounded-full"
             />
-            <span className="text-foreground font-semibold text-lg">ghost</span>
+            <span className="text-foreground font-semibold text-lg">GhostFi</span>
           </div>
 
           {/* Nav Items */}
