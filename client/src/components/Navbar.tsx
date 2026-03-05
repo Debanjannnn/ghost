@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { Settings, ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
 import { useNavigation } from "./providers/navigation-provider";
+import { usePrivy } from "@privy-io/react-auth";
 
 const navItems = [
   { label: "Stake", href: "/stake" },
@@ -22,6 +23,9 @@ const moreLinks = [
 const Navbar = () => {
   const { activePage, setActivePage } = useNavigation();
   const [moreOpen, setMoreOpen] = useState(false);
+  const { login, logout, authenticated, user } = usePrivy();
+
+  const walletAddress = user?.wallet?.address;
 
   return (
     <header className="w-full">
@@ -136,9 +140,23 @@ const Navbar = () => {
             <Settings className="w-5 h-5" />
           </button>
 
-          <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-full text-sm font-medium transition-colors cursor-pointer">
-            Connect
-          </button>
+          {authenticated ? (
+            <button
+              onClick={logout}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-full text-sm font-medium transition-colors cursor-pointer"
+            >
+              {walletAddress
+                ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`
+                : "Disconnect"}
+            </button>
+          ) : (
+            <button
+              onClick={login}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-full text-sm font-medium transition-colors cursor-pointer"
+            >
+              Connect
+            </button>
+          )}
         </div>
       </div>
     </header>
