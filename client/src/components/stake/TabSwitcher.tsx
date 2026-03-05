@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-const tabs = ["Stake", "Swap", "Migrate", "Unstake"];
+const tabs = ["Stake", "Swap", "Migrate", "Unstake", "Lend"];
 
 interface TabSwitcherProps {
   activeTab: string;

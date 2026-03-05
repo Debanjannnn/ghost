@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import TabSwitcher from "./TabSwitcher";
-import { StakeTab, SwapTab, MigrateTab, UnstakeTab } from "./tabs";
+import { StakeTab, SwapTab, MigrateTab, UnstakeTab, LendTab } from "./tabs";
 
 const StakePage = () => {
   const [activeTab, setActiveTab] = useState("Stake");
@@ -15,6 +15,7 @@ const StakePage = () => {
       {activeTab === "Swap" && <SwapTab />}
       {activeTab === "Migrate" && <MigrateTab />}
       {activeTab === "Unstake" && <UnstakeTab />}
+      {activeTab === "Lend" && <LendTab />}
     </div>
   );
 };
