@@ -1,7 +1,6 @@
 import { Context } from "hono";
 import { authenticate } from "../auth";
 import { state } from "../state";
-import * as externalApi from "../external-api";
 
 export const repayLoan = async (c: Context) => {
   try {
@@ -53,12 +52,12 @@ export const repayLoan = async (c: Context) => {
       state.creditBalance(tick.lender, loan.token, tick.amount + interest);
     }
 
-    // Return collateral to borrower
-    const transfer = await externalApi.privateTransfer(
-      undefined,
+    // Queue collateral return for CRE to execute
+    const transferId = state.queueTransfer(
       loan.borrower,
       loan.collateralToken,
-      loan.collateralAmount.toString()
+      loan.collateralAmount.toString(),
+      "return-collateral-repay"
     );
 
     loan.status = "repaid";
@@ -68,7 +67,7 @@ export const repayLoan = async (c: Context) => {
       status: "repaid",
       loanId,
       totalPaid: repayAmount.toString(),
-      transactionId: transfer.transaction_id,
+      transferId,
     });
   } catch (err: any) {
     return c.json({ error: err.message }, 401);

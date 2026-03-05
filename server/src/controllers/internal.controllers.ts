@@ -1,6 +1,5 @@
 import { Context } from "hono";
 import { state } from "../state";
-import * as externalApi from "../external-api";
 import type { MatchProposal } from "../types";
 
 export const getPendingIntents = async (c: Context) => {
@@ -57,7 +56,7 @@ export const recordMatchProposals = async (c: Context) => {
       collateralAmount: BigInt(p.collateralAmount),
       status: "pending",
       createdAt: Date.now(),
-      expiresAt: Date.now() + 5 * 60 * 1000, // 5 min
+      expiresAt: Date.now() + 5 * 1000, // 5 sec (short for demo)
     };
 
     state.matchProposals.set(proposal.proposalId, proposal);
@@ -115,12 +114,12 @@ export const expireProposals = async (c: Context) => {
         state.debitBalance(tick.lender, proposal.token, tick.amount);
       }
 
-      // Disburse principal
-      await externalApi.privateTransfer(
-        undefined,
+      // Queue principal disbursement for CRE to execute
+      state.queueTransfer(
         proposal.borrower,
         proposal.token,
-        proposal.principal.toString()
+        proposal.principal.toString(),
+        "disburse"
       );
 
       autoAccepted++;
@@ -147,4 +146,26 @@ export const checkLoans = async (c: Context) => {
     }));
 
   return c.json({ loans });
+};
+
+export const getPendingTransfers = async (c: Context) => {
+  const transfers = Array.from(state.pendingTransfers.values())
+    .filter((t) => t.status === "pending");
+  return c.json({ transfers });
+};
+
+export const confirmTransfers = async (c: Context) => {
+  const { transferIds } = await c.req.json();
+  if (!Array.isArray(transferIds))
+    return c.json({ error: "transferIds must be an array" }, 400);
+
+  let confirmed = 0;
+  for (const id of transferIds) {
+    const transfer = state.pendingTransfers.get(id);
+    if (transfer && transfer.status === "pending") {
+      transfer.status = "completed";
+      confirmed++;
+    }
+  }
+  return c.json({ confirmed });
 };

@@ -5,7 +5,8 @@ function required(key: string): string {
 }
 
 export const config = {
-  POOL_PRIVATE_KEY: required("POOL_PRIVATE_KEY"),
+  // Only needed for generateShieldedAddress; will be moved to CRE vault secrets
+  POOL_PRIVATE_KEY: process.env.POOL_PRIVATE_KEY ?? "",
   TOKEN_ADDRESS: required("TOKEN_ADDRESS"),
   CRE_PUBLIC_KEY: required("CRE_PUBLIC_KEY"),
   EXTERNAL_API_URL:

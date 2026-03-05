@@ -123,19 +123,19 @@ export const cancelLend = async (c: Context) => {
     if (!intentId)
       return c.json({ error: "No active intent for this address" }, 409);
 
-    // Pool transfers funds back to user via private transfer
-    const transfer = await externalApi.privateTransfer(
-      undefined,
+    // Queue transfer for CRE to execute
+    const transferId = state.queueTransfer(
       account,
       slot.token,
-      slot.amount.toString()
+      slot.amount.toString(),
+      "cancel-lend"
     );
 
     state.activeBuffer.delete(intentId);
     state.debitBalance(account, slot.token, slot.amount);
     slot.status = "cancelled";
 
-    return c.json({ status: "cancelled", transactionId: transfer.transaction_id });
+    return c.json({ status: "cancelled", transferId });
   } catch (err: any) {
     return c.json({ error: err.message }, 401);
   }

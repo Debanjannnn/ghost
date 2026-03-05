@@ -8,10 +8,12 @@ const EXTERNAL_DOMAIN = {
   verifyingContract: config.EXTERNAL_VAULT_ADDRESS as `0x${string}`,
 };
 
-const poolWallet = new ethers.Wallet(config.POOL_PRIVATE_KEY);
+const poolWallet = config.POOL_PRIVATE_KEY
+  ? new ethers.Wallet(config.POOL_PRIVATE_KEY)
+  : null;
 
 export function getPoolAddress(): string {
-  return poolWallet.address;
+  return poolWallet?.address ?? "0x0000000000000000000000000000000000000000";
 }
 
 export function currentTimestamp(): number {
@@ -41,8 +43,9 @@ async function signAndPost(
 }
 
 export async function generateShieldedAddress(
-  wallet: ethers.Wallet = poolWallet
+  wallet: ethers.Wallet = poolWallet!
 ): Promise<{ shieldedAddress: string }> {
+  if (!wallet) throw new Error("POOL_PRIVATE_KEY required for generateShieldedAddress");
   const account = wallet.address;
   const timestamp = currentTimestamp();
   const message = { account, timestamp };
@@ -61,10 +64,11 @@ export async function generateShieldedAddress(
 }
 
 export async function requestWithdrawTicket(
-  wallet: ethers.Wallet = poolWallet,
+  wallet: ethers.Wallet = poolWallet!,
   token: string,
   amount: string
 ): Promise<any> {
+  if (!wallet) throw new Error("POOL_PRIVATE_KEY required for requestWithdrawTicket");
   const account = wallet.address;
   const timestamp = currentTimestamp();
   const message = { account, token, amount, timestamp };
@@ -85,11 +89,12 @@ export async function requestWithdrawTicket(
 }
 
 export async function privateTransfer(
-  wallet: ethers.Wallet = poolWallet,
+  wallet: ethers.Wallet = poolWallet!,
   recipient: string,
   token: string,
   amount: string
 ): Promise<any> {
+  if (!wallet) throw new Error("POOL_PRIVATE_KEY required for privateTransfer");
   const sender = wallet.address;
   const timestamp = currentTimestamp();
   const message = {
@@ -121,9 +126,10 @@ export async function privateTransfer(
 }
 
 export async function getBalance(
-  wallet: ethers.Wallet = poolWallet,
+  wallet: ethers.Wallet = poolWallet!,
   token: string
 ): Promise<{ balances: Record<string, string> }> {
+  if (!wallet) throw new Error("POOL_PRIVATE_KEY required for getBalance");
   const account = wallet.address;
   const timestamp = currentTimestamp();
   const message = { account, timestamp };

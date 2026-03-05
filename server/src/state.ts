@@ -1,4 +1,4 @@
-import type { DepositSlot, LendIntent, BorrowIntent, MatchProposal, Loan } from "./types";
+import type { DepositSlot, LendIntent, BorrowIntent, MatchProposal, Loan, PendingTransfer } from "./types";
 
 const SLOT_TTL_MS = 10 * 60 * 1000; // 10 minutes
 
@@ -9,7 +9,22 @@ class State {
   borrowIntents: Map<string, BorrowIntent> = new Map(); // intentId → intent
   matchProposals: Map<string, MatchProposal> = new Map(); // proposalId → proposal
   loans: Map<string, Loan> = new Map(); // loanId → loan
+  pendingTransfers: Map<string, PendingTransfer> = new Map();
   currentEpoch: number = 1;
+
+  queueTransfer(recipient: string, token: string, amount: string, reason: PendingTransfer["reason"]): string {
+    const id = crypto.randomUUID();
+    this.pendingTransfers.set(id, {
+      id,
+      recipient: recipient.toLowerCase(),
+      token: token.toLowerCase(),
+      amount,
+      reason,
+      createdAt: Date.now(),
+      status: "pending",
+    });
+    return id;
+  }
 
   creditBalance(user: string, token: string, amount: bigint): void {
     const u = user.toLowerCase();

@@ -15,6 +15,8 @@ import {
   recordMatchProposals,
   expireProposals,
   checkLoans,
+  getPendingTransfers,
+  confirmTransfers,
 } from "../controllers/internal.controllers";
 import { repayLoan } from "../controllers/repay.controllers";
 import { config } from "../config";
@@ -48,5 +50,7 @@ ghostRoute.get("/internal/pending-intents", internalAuth, getPendingIntents);
 ghostRoute.post("/internal/record-match-proposals", internalAuth, recordMatchProposals);
 ghostRoute.post("/internal/expire-proposals", internalAuth, expireProposals);
 ghostRoute.post("/internal/check-loans", internalAuth, checkLoans);
+ghostRoute.get("/internal/pending-transfers", internalAuth, getPendingTransfers);
+ghostRoute.post("/internal/confirm-transfers", internalAuth, confirmTransfers);
 
 export default ghostRoute;

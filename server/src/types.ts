@@ -67,3 +67,13 @@ export interface Loan {
   status: "active" | "repaid" | "defaulted";
   repaidAmount: bigint;
 }
+
+export interface PendingTransfer {
+  id: string;
+  recipient: string;
+  token: string;
+  amount: string;
+  reason: "cancel-lend" | "cancel-borrow" | "disburse" | "return-collateral" | "repay-lender" | "return-collateral-repay";
+  createdAt: number;
+  status: "pending" | "completed" | "failed";
+}

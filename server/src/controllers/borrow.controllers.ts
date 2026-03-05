@@ -1,7 +1,6 @@
 import { Context } from "hono";
 import { authenticate } from "../auth";
 import { state } from "../state";
-import * as externalApi from "../external-api";
 import type { BorrowIntent } from "../types";
 
 export const submitBorrowIntent = async (c: Context) => {
@@ -89,19 +88,19 @@ export const cancelBorrow = async (c: Context) => {
         409
       );
 
-    // Return collateral
-    const transfer = await externalApi.privateTransfer(
-      undefined,
+    // Queue collateral return for CRE to execute
+    const transferId = state.queueTransfer(
       account,
       intent.collateralToken,
-      intent.collateralAmount.toString()
+      intent.collateralAmount.toString(),
+      "cancel-borrow"
     );
 
     intent.status = "cancelled";
 
     return c.json({
       status: "cancelled",
-      transactionId: transfer.transaction_id,
+      transferId,
     });
   } catch (err: any) {
     return c.json({ error: err.message }, 401);
@@ -166,18 +165,18 @@ export const acceptProposal = async (c: Context) => {
       state.debitBalance(tick.lender, proposal.token, tick.amount);
     }
 
-    // Disburse principal to borrower
-    const transfer = await externalApi.privateTransfer(
-      undefined,
+    // Queue principal disbursement for CRE to execute
+    const transferId = state.queueTransfer(
       proposal.borrower,
       proposal.token,
-      proposal.principal.toString()
+      proposal.principal.toString(),
+      "disburse"
     );
 
     return c.json({
       status: "accepted",
       loanId,
-      transactionId: transfer.transaction_id,
+      transferId,
     });
   } catch (err: any) {
     return c.json({ error: err.message }, 401);
@@ -210,11 +209,12 @@ export const rejectProposal = async (c: Context) => {
       (proposal.collateralAmount * BigInt(5)) / BigInt(100);
     const returnAmount = proposal.collateralAmount - slashAmount;
 
-    const transfer = await externalApi.privateTransfer(
-      undefined,
+    // Queue collateral return for CRE to execute
+    const transferId = state.queueTransfer(
       proposal.borrower,
       proposal.collateralToken,
-      returnAmount.toString()
+      returnAmount.toString(),
+      "return-collateral"
     );
 
     proposal.status = "rejected";
@@ -237,7 +237,7 @@ export const rejectProposal = async (c: Context) => {
       status: "rejected",
       slashed: slashAmount.toString(),
       returned: returnAmount.toString(),
-      transactionId: transfer.transaction_id,
+      transferId,
     });
   } catch (err: any) {
     return c.json({ error: err.message }, 401);
