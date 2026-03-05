@@ -1,6 +1,7 @@
 "use client";
 
 import { PrivyProvider as Provider } from "@privy-io/react-auth";
+import { sepolia } from "viem/chains";
 
 export default function PrivyProviderWrapper({
   children,
@@ -16,6 +17,8 @@ export default function PrivyProviderWrapper({
           accentColor: "#4f46e5",
         },
         loginMethods: ["wallet"],
+        defaultChain: sepolia,
+        supportedChains: [sepolia],
       }}
     >
       {children}
