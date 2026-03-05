@@ -334,12 +334,10 @@ const BorrowCard = () => {
             />
             <div className="shrink-0">
               <div className="flex items-center gap-2 bg-muted/50 rounded-xl px-4 py-3 border border-border">
-                <div
-                  className={`w-5 h-5 rounded-full ${
-                    collateralCoin.symbol === "gUSD"
-                      ? "bg-gradient-to-br from-green-400 to-emerald-600"
-                      : "bg-gradient-to-br from-blue-400 to-indigo-600"
-                  }`}
+                <img
+                  src={collateralCoin.symbol === "gUSD" ? "/gusd.png" : "/geth.png"}
+                  alt={collateralCoin.symbol}
+                  className="w-5 h-5 rounded-full object-cover"
                 />
                 <span className="text-sm font-semibold text-foreground">
                   {collateralCoin.symbol}

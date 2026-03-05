@@ -10,12 +10,12 @@ import { usePrivy } from "@privy-io/react-auth";
 const navItems = [
   { label: "Stake", href: "/" },
   { label: "Explore", href: "/explore" },
-  { label: "Infinity", href: "/infinity" },
+  { label: "Dungeon", href: "/infinity" },
+  { label: "Profile", href: "/profile" }
 ];
 
 const moreLinks = [
-  { label: "Wonderland", href: "#", external: false },
-  { label: "Vote", href: "#", external: true },
+  { label: "Dark Dimension", href: "#", external: false },
   { label: "Research", href: "#", external: true },
   { label: "Blog", href: "#", external: true },
   { label: "Docs", href: "#", external: true },
