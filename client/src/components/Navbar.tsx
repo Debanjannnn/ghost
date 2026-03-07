@@ -6,6 +6,7 @@ import { useState, useRef, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Bell, ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
 import { usePrivy } from "@privy-io/react-auth";
+import { useNotifications } from "@/hooks/useNotifications";
 
 const navItems = [
   { label: "Home", href: "/" },
@@ -17,80 +18,22 @@ const navItems = [
 const moreLinks = [
   { label: "Dark Dimension", href: "#", external: false },
   { label: "Research", href: "#", external: true },
-  { label: "Blog", href: "#", external: true },
+  { label: "Litepaper", href: "#", external: true },
   { label: "Docs", href: "#", external: true },
-];
-
-// Hardcoded notifications — replace with real data later
-const HARDCODED_NOTIFICATIONS = [
-  {
-    id: "1",
-    type: "settle" as const,
-    title: "Borrow Settled",
-    message: "Your 800 gUSD borrow has been matched at 5.08% blended rate",
-    time: "2 min ago",
-    read: false,
-  },
-  {
-    id: "2",
-    type: "settle" as const,
-    title: "Lend Matched",
-    message: "Your 500 gUSD lend intent was matched with a borrower",
-    time: "5 min ago",
-    read: false,
-  },
-  {
-    id: "3",
-    type: "pool" as const,
-    title: "New Pool Added",
-    message: "gETH/gUSD lending pool is now live with 3 active lenders",
-    time: "12 min ago",
-    read: false,
-  },
-  {
-    id: "4",
-    type: "settle" as const,
-    title: "Loan Repaid",
-    message: "Borrower repaid 600 gUSD — your payout of 525 gUSD is ready",
-    time: "1 hr ago",
-    read: false,
-  },
-  {
-    id: "5",
-    type: "pool" as const,
-    title: "Pool Update",
-    message: "gUSD pool liquidity increased by 2,000 gUSD",
-    time: "3 hr ago",
-    read: true,
-  },
-  {
-    id: "6",
-    type: "settle" as const,
-    title: "Collateral Released",
-    message: "5 gETH collateral returned after full loan repayment",
-    time: "3 hr ago",
-    read: true,
-  },
-  {
-    id: "7",
-    type: "settle" as const,
-    title: "Proposal Auto-Accepted",
-    message: "Your 200 gUSD borrow proposal was auto-accepted after timeout",
-    time: "5 hr ago",
-    read: true,
-  },
+  { label: "Careers", href: "https://tattered-elm-7ca.notion.site/Careers-at-Ghost-Finance-31c9eec45dff80b8989fdf81a7373b12", external: true },
 ];
 
 const Navbar = () => {
   const pathname = usePathname();
   const [moreOpen, setMoreOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
-  const [notifications, setNotifications] = useState(HARDCODED_NOTIFICATIONS);
   const notifRef = useRef<HTMLDivElement>(null);
   const { login, logout, authenticated, user } = usePrivy();
 
   const walletAddress = user?.wallet?.address;
-  const unreadCount = notifications.filter((n) => !n.read).length;
+  const { notifications, unreadCount, markAllRead } = useNotifications(
+    authenticated ? walletAddress?.toLowerCase() : undefined
+  );
 
   // Close notification panel on outside click
   useEffect(() => {
@@ -102,10 +45,6 @@ const Navbar = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  const markAllRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-  };
 
   return (
     <header className="w-full">
@@ -245,6 +184,11 @@ const Navbar = () => {
 
                 {/* Notification list */}
                 <div className="divide-y divide-border">
+                  {notifications.length === 0 && (
+                    <div className="px-5 py-8 text-center text-sm text-muted-foreground">
+                      No notifications yet
+                    </div>
+                  )}
                   {notifications.map((n) => (
                     <div
                       key={n.id}
