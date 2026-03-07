@@ -9,7 +9,7 @@ const StakeTab = () => {
         <h1 className="text-2xl font-medium text-foreground">
           Lend privately on GHOST
         </h1>
-        <StatsDisplay />
+        <StatsDisplay liquidity="0" intents={0} />
       </div>
 
       <StakeCard />

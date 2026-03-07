@@ -20,6 +20,7 @@ import {
   type Coin,
 } from "@/lib/constants";
 import { encryptRate, get, post, privateTransfer, toWei, ts } from "@/lib/ghost";
+import { RollingNumber, RollingText } from "@/components/ui/rolling-text";
 
 type Status = "idle" | "approving" | "depositing" | "transferring" | "submitting" | "done" | "error";
 
@@ -64,6 +65,46 @@ function friendlyError(err: unknown): string {
   const msg = e?.shortMessage ?? e?.reason ?? e?.message ?? "Something went wrong";
   return msg.length > 120 ? msg.slice(0, 120) + "..." : msg;
 }
+
+const AnimatedInput = ({
+  value,
+  onChange,
+  onKeyDown,
+  placeholder,
+  readOnly,
+}: {
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  placeholder: string;
+  readOnly?: boolean;
+}) => {
+  const [focused, setFocused] = useState(false);
+
+  return (
+    <div className="w-full relative">
+      <input
+        type="text"
+        inputMode="decimal"
+        value={value}
+        onChange={onChange}
+        onKeyDown={onKeyDown}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        placeholder={placeholder}
+        readOnly={readOnly}
+        className={`bg-transparent text-3xl font-medium outline-none w-full placeholder:text-muted-foreground/60 ${
+          value && !focused ? "text-transparent caret-transparent" : "text-foreground"
+        }`}
+      />
+      {value && !focused && (
+        <div className="absolute inset-0 flex items-center pointer-events-none text-3xl font-medium text-foreground">
+          <RollingNumber value={value} />
+        </div>
+      )}
+    </div>
+  );
+};
 
 const BorrowCard = () => {
   const { authenticated, login } = usePrivy();
@@ -324,15 +365,12 @@ const BorrowCard = () => {
             {quoteLoading && <Loader2 className="w-3.5 h-3.5 animate-spin text-indigo-400" />}
           </div>
           <div className="flex items-center justify-between gap-4">
-            <input
-              type="text"
-              inputMode="decimal"
+            <AnimatedInput
               value={collateralAmount}
               onChange={handleNumericChange(setCollateralAmount)}
               onKeyDown={blockInvalidChars}
               placeholder="0"
               readOnly={quoteLoading}
-              className="bg-transparent text-3xl font-medium text-foreground outline-none w-full placeholder:text-muted-foreground/60"
             />
             <div className="shrink-0">
               <div className="flex items-center gap-2 bg-muted/50 rounded-xl px-4 py-3 border border-border">
@@ -396,16 +434,16 @@ const BorrowCard = () => {
           <>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Credit Tier</span>
-              <span className="text-foreground font-medium">{quoteMeta.tier}</span>
+              <span className="text-foreground font-medium"><RollingText text={quoteMeta.tier} /></span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Collateral Ratio</span>
-              <span className="text-foreground font-medium">{quoteMeta.multiplier}x</span>
+              <span className="text-foreground font-medium"><RollingNumber value={quoteMeta.multiplier} suffix="x" /></span>
             </div>
             {quoteMeta.ethPrice && (
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">ETH Price</span>
-                <span className="text-foreground font-medium">${quoteMeta.ethPrice.toFixed(2)}</span>
+                <span className="text-foreground font-medium"><RollingNumber prefix="$" value={quoteMeta.ethPrice.toFixed(2)} /></span>
               </div>
             )}
           </>
@@ -416,13 +454,13 @@ const BorrowCard = () => {
         </div>
       </div>
 
-      {/* Rate hint */}
+      {/* Rate hint
       {hasAmountAndDuration && rateEmpty && status !== "error" && (
         <div className="flex items-center gap-2 text-sm px-4 py-3 rounded-xl bg-amber-500/10 text-amber-400">
           <AlertCircle className="w-4 h-4" />
           <span>Please enter a max rate to continue</span>
         </div>
-      )}
+      )} */}
 
       {/* Status */}
       {status !== "idle" && status !== "done" && (

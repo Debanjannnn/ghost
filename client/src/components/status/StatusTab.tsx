@@ -186,12 +186,6 @@ const StatusTab = () => {
   if (!authenticated) {
     return (
       <div className="space-y-6">
-        <div className="space-y-2">
-          <h1 className="text-2xl font-medium text-foreground">Status</h1>
-          <p className="text-sm text-muted-foreground">
-            Connect your wallet to view your active intents and loans.
-          </p>
-        </div>
         <button
           onClick={login}
           className="w-full text-gray-900 font-medium py-4 rounded-2xl transition-colors cursor-pointer text-lg"
@@ -219,13 +213,6 @@ const StatusTab = () => {
 
   return (
     <div className="space-y-6">
-      <div className="space-y-2">
-        <h1 className="text-2xl font-medium text-foreground">Status</h1>
-        <p className="text-sm text-muted-foreground">
-          Your active intents, loans, and pending operations.
-        </p>
-      </div>
-
       {/* Error */}
       {error && (
         <div className="flex items-center gap-2 text-sm px-4 py-3 rounded-xl bg-red-500/10 text-red-400">

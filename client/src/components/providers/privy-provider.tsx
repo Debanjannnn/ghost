@@ -1,7 +1,15 @@
 "use client";
 
 import { PrivyProvider as Provider } from "@privy-io/react-auth";
-import { sepolia } from "viem/chains";
+import {
+  sepolia,
+  baseSepolia,
+  arbitrumSepolia,
+  optimismSepolia,
+  avalancheFuji,
+  polygonAmoy,
+  bscTestnet,
+} from "viem/chains";
 
 export default function PrivyProviderWrapper({
   children,
@@ -18,7 +26,15 @@ export default function PrivyProviderWrapper({
         },
         loginMethods: ["wallet"],
         defaultChain: sepolia,
-        supportedChains: [sepolia],
+        supportedChains: [
+          sepolia,
+          baseSepolia,
+          arbitrumSepolia,
+          optimismSepolia,
+          avalancheFuji,
+          polygonAmoy,
+          bscTestnet,
+        ],
       }}
     >
       {children}
