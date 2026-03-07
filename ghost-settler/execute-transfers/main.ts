@@ -78,8 +78,12 @@ const onCronTrigger = async (runtime: Runtime<Config>, _payload: CronPayload): P
   if (!ok(pendingResp)) return "error:fetch-pending";
 
   const data = json(pendingResp) as { transfers: PendingTransfer[] };
-  const transfers = data.transfers ?? [];
-  if (transfers.length === 0) return "no-pending";
+  const allTransfers = data.transfers ?? [];
+  if (allTransfers.length === 0) return "no-pending";
+
+  // CRE limits confidential HTTP calls to 5 per execution.
+  // Budget: 1 (fetch) + N (transfers) + 1 (confirm) = N+2, so max N=3
+  const transfers = allTransfers.slice(0, 3);
 
   // 2. Get pool private key from vault for signing
   const poolKeyResult = runtime.getSecret({ id: "POOL_PRIVATE_KEY" }).result();

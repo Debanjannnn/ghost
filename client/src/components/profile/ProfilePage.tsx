@@ -9,6 +9,7 @@ import ProfileStats from "./ProfileStats";
 import ProfileCharts from "./ProfileCharts";
 import ProfilePositions from "./ProfilePositions";
 
+
 interface CreditInfo {
   tier: string;
   loansRepaid: number;
@@ -112,6 +113,7 @@ const ProfilePage = () => {
         borrowCount={borrowCount}
         lendCount={lendCount}
         intentCount={intentCount}
+        addr={addr ?? ""}
       />
 
       <ProfilePositions

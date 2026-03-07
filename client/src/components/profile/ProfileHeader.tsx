@@ -1,9 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { ethers } from "ethers";
 import { Copy, Check, ExternalLink } from "lucide-react";
+import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
+
+const PFP_COUNT = 3;
 
 interface ProfileHeaderProps {
   address: string;
@@ -55,6 +58,7 @@ const tierConfig: Record<string, {
 const ProfileHeader = ({ address, tier, multiplier, loansRepaid, loansDefaulted }: ProfileHeaderProps) => {
   const [copied, setCopied] = useState(false);
   const [ensName, setEnsName] = useState<string | null>(null);
+  const pfp = useMemo(() => `/pfp/${Math.floor(Math.random() * PFP_COUNT) + 1}.jpg`, []);
   const config = tierConfig[tier] ?? tierConfig.bronze;
   const repScore = Math.max(0, loansRepaid * 10 - loansDefaulted * 25);
   const progress = tier === "gold"
@@ -82,9 +86,13 @@ const ProfileHeader = ({ address, tier, multiplier, loansRepaid, loansDefaulted 
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
         {/* Left: Identity */}
         <div className="flex items-center gap-4">
-          <div className="h-12 w-12 rounded-full bg-gradient-to-br from-[#e2a9f1] to-[#a78bfa] flex items-center justify-center text-lg font-bold text-gray-900">
-            {address.slice(2, 4).toUpperCase()}
-          </div>
+          <Image
+            src={pfp}
+            alt="avatar"
+            width={48}
+            height={48}
+            className="h-12 w-12 rounded-full object-cover"
+          />
           <div className="space-y-1">
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-bold text-foreground font-mono">

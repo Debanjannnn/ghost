@@ -114,7 +114,17 @@ export const expireProposals = async (c: Context) => {
       const score = await getCreditScore(proposal.borrower as string);
       const multiplier = getCollateralMultiplier(score.tier);
       const principalBig = BigInt(proposal.principal as string);
-      const requiredValueUsd = (Number(principalBig) / 1e18) * multiplier;
+      const borrowToken = (proposal.token as string).toLowerCase();
+      const isEthBorrow = borrowToken === config.GETH_ADDRESS.toLowerCase();
+      const principalNum = Number(principalBig) / 1e18;
+      let principalUsd: number;
+      if (isEthBorrow) {
+        const ethPrice = await getEthPrice();
+        principalUsd = principalNum * ethPrice;
+      } else {
+        principalUsd = principalNum;
+      }
+      const requiredValueUsd = principalUsd * multiplier;
       let requiredCollateral: bigint;
       if (isUsdCollateral) {
         requiredCollateral = BigInt(Math.ceil(requiredValueUsd * 1e18));

@@ -111,6 +111,22 @@ export const CLAIM_EXCESS_COLLATERAL_TYPES = {
   ],
 };
 
+export const WITHDRAW_TYPES = {
+  "Withdraw Tokens": [
+    { name: "account", type: "address" },
+    { name: "token", type: "address" },
+    { name: "amount", type: "uint256" },
+    { name: "timestamp", type: "uint256" },
+  ],
+};
+
+export const BALANCE_TYPES = {
+  "Retrieve Balances": [
+    { name: "account", type: "address" },
+    { name: "timestamp", type: "uint256" },
+  ],
+};
+
 export type Coin = { symbol: string; name: string; address: string };
 
 export const COINS: Coin[] = [

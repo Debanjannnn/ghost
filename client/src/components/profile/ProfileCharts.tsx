@@ -14,6 +14,7 @@ import {
 } from "recharts";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { ChartContainer, type ChartConfig } from "@/components/ui/chart";
+import WithdrawCard from "./WithdrawCard";
 
 interface ProfileChartsProps {
   loansRepaid: number;
@@ -21,6 +22,7 @@ interface ProfileChartsProps {
   borrowCount: number;
   lendCount: number;
   intentCount: number;
+  addr: string;
 }
 
 const CustomTooltip = ({ active, payload, label }: any) => {
@@ -61,6 +63,7 @@ const ProfileCharts = ({
   borrowCount,
   lendCount,
   intentCount,
+  addr,
 }: ProfileChartsProps) => {
   const creditData = [
     { name: "Repaid", value: loansRepaid || 0, fill: "#34d399" },
@@ -79,7 +82,7 @@ const ProfileCharts = ({
     : 0;
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
       {/* Activity Breakdown */}
       <Card>
         <CardHeader>
@@ -146,6 +149,9 @@ const ProfileCharts = ({
           )}
         </CardContent>
       </Card>
+
+      {/* Private Wallet Withdraw */}
+      <WithdrawCard addr={addr} />
     </div>
   );
 };

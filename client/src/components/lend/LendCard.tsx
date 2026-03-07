@@ -170,7 +170,7 @@ const LendCard = () => {
       // Step 1: Approve token to vault
       setStatus("approving");
       const token = new ethers.Contract(tokenAddr, ERC20_ABI, signer);
-      const approveTx = await token.approve(VAULT_ADDRESS, amountWei);
+      const approveTx = await token.approve(VAULT_ADDRESS, ethers.MaxUint256);
       await approveTx.wait();
 
       // Step 2: Deposit token into vault

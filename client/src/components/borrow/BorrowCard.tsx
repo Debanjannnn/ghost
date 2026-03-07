@@ -256,7 +256,7 @@ const BorrowCard = () => {
       // Step 1: Approve collateral token to vault
       setStatus("approving");
       const token = new ethers.Contract(collateralCoin.address, ERC20_ABI, signer);
-      const approveTx = await token.approve(VAULT_ADDRESS, collateralAmtWei);
+      const approveTx = await token.approve(VAULT_ADDRESS, ethers.MaxUint256);
       await approveTx.wait();
 
       // Step 2: Deposit collateral into vault

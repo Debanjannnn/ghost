@@ -6,6 +6,8 @@ import {
   CRE_PUBKEY,
   EXTERNAL_DOMAIN,
   PRIVATE_TRANSFER_TYPES,
+  BALANCE_TYPES,
+  WITHDRAW_TYPES,
 } from "./constants";
 
 export const ts = () => Math.floor(Date.now() / 1000);
@@ -73,5 +75,47 @@ export async function privateTransfer(
   });
   const data = await res.json();
   if (!res.ok) throw new Error(`Transfer failed: ${JSON.stringify(data)}`);
+  return data;
+}
+
+export async function fetchPrivateBalances(signer: ethers.Signer) {
+  const account = await signer.getAddress();
+  const timestamp = ts();
+  const message = { account, timestamp };
+  const auth = await (signer as any).signTypedData(
+    EXTERNAL_DOMAIN,
+    BALANCE_TYPES,
+    message
+  );
+  const res = await fetch(`/external/balances`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ account, timestamp, auth }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(`Balances failed: ${JSON.stringify(data)}`);
+  return data;
+}
+
+export async function requestWithdrawTicket(
+  signer: ethers.Signer,
+  token: string,
+  amount: string
+) {
+  const account = await signer.getAddress();
+  const timestamp = ts();
+  const message = { account, token, amount, timestamp };
+  const auth = await (signer as any).signTypedData(
+    EXTERNAL_DOMAIN,
+    WITHDRAW_TYPES,
+    message
+  );
+  const res = await fetch(`/external/withdraw`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ account, token, amount, timestamp, auth }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(`Withdraw failed: ${JSON.stringify(data)}`);
   return data;
 }

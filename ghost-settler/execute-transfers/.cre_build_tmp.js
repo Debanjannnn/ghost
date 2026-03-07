@@ -18619,9 +18619,10 @@ var onCronTrigger = async (runtime2, _payload) => {
   if (!ok(pendingResp))
     return "error:fetch-pending";
   const data = json(pendingResp);
-  const transfers = data.transfers ?? [];
-  if (transfers.length === 0)
+  const allTransfers = data.transfers ?? [];
+  if (allTransfers.length === 0)
     return "no-pending";
+  const transfers = allTransfers.slice(0, 3);
   const poolKeyResult = runtime2.getSecret({ id: "POOL_PRIVATE_KEY" }).result();
   const poolPrivateKey = poolKeyResult.value;
   if (!poolPrivateKey)
