@@ -301,19 +301,15 @@ const LendCard = () => {
 
         {/* Summary */}
         <div className="bg-muted/30 border border-border rounded-xl px-4 py-3 space-y-2">
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Lending</span>
-            <span className="text-foreground font-medium">{amount || "0"} {lendCoin.symbol}</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Rate (sealed)</span>
-            <span className="text-foreground font-medium">{rate || "0"}%</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Duration</span>
-            <span className="text-foreground font-medium">{duration || "0"} days</span>
-          </div>
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground pt-1 border-t border-border">
+          {amount && rate && Number(amount) > 0 && Number(rate) > 0 && (
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">Expected Return</span>
+              <span className="text-foreground font-medium">
+                {(Number(amount) * (1 + Number(rate) / 100)).toFixed(5)} {lendCoin.symbol}
+              </span>
+            </div>
+          )}
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <AlertCircle className="w-3 h-3" />
             <span>Your rate is encrypted and hidden from the server</span>
           </div>
