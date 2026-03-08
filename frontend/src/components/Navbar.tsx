@@ -133,7 +133,7 @@ export default function Navbar() {
   const close = () => setOpenMenu(null);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-[#101010]/80 backdrop-blur-xl">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-transparent backdrop-blur-md">
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Image src="/ghost-logo1.png" alt="Ghost" width={90} height={36} className="h-9 w-auto" />
