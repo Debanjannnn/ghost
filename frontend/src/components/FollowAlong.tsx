@@ -20,6 +20,8 @@ export default function FollowAlong() {
         <div className="grid grid-cols-1 sm:grid-cols-5 gap-4 mb-4">
           <motion.a
             href="#"
+            target="_blank"
+            rel="noopener noreferrer"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
@@ -35,6 +37,8 @@ export default function FollowAlong() {
 
           <motion.a
             href="#"
+            target="_blank"
+            rel="noopener noreferrer"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
@@ -55,7 +59,9 @@ export default function FollowAlong() {
         {/* Bottom row: X + Discord (equal width) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <motion.a
-            href="#"
+            href="https://x.com/_ghostfi"
+            target="_blank"
+            rel="noopener noreferrer"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
@@ -73,7 +79,9 @@ export default function FollowAlong() {
           </motion.a>
 
           <motion.a
-            href="#"
+            href="https://discord.gg/JyYbQECkyZ"
+            target="_blank"
+            rel="noopener noreferrer"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
