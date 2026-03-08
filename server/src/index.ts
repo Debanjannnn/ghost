@@ -9,7 +9,11 @@ await connectDB();
 
 const app = new Hono();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+  }),
+);
 
 app.get("/health", (c) => {
   return c.json({
