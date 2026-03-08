@@ -1,4 +1,4 @@
-export const GHOST_SERVER_URL = "https://do.roydevelops.tech/ghost-server";
+export const GHOST_SERVER_URL = "http://localhost:8080";
 export const RPC_URL = "https://ethereum-sepolia-rpc.publicnode.com";
 
 export const CHAIN_ID = 11155111;
@@ -14,10 +14,12 @@ export const COINS = [
   { symbol: "gETH", name: "Ghost ETH", address: gETH },
 ] as const;
 
-export const tokenName = (addr: string) =>
-  COINS.find((c) => c.address.toLowerCase() === addr.toLowerCase())?.symbol ?? addr.slice(0, 10);
+export const tokenName = (addr: string | undefined) => {
+  if (!addr) return "???";
+  return COINS.find((c) => c.address.toLowerCase() === addr.toLowerCase())?.symbol ?? addr.slice(0, 10);
+};
 
-export const tokenIcon = (addr: string) =>
+export const tokenIcon = (addr: string | undefined) =>
   tokenName(addr) === "gUSD" ? "gusd.png" : "geth.png";
 
 export const ERC20_ABI = [

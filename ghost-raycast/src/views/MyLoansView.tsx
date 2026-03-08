@@ -23,6 +23,7 @@ export function MyLoansView({ wallet }: { wallet: WalletData }) {
   const [isLoading, setIsLoading] = useState(true);
 
   async function load() {
+    if (!wallet?.address) return;
     setIsLoading(true);
     try {
       const [lender, borrower] = await Promise.all([
@@ -42,7 +43,7 @@ export function MyLoansView({ wallet }: { wallet: WalletData }) {
   useEffect(() => { load(); }, []);
 
   const ts = () => Math.floor(Date.now() / 1000);
-  const signer = new ethers.Wallet(wallet.privateKey);
+  const signer = wallet?.privateKey ? new ethers.Wallet(wallet.privateKey) : null;
 
   const fmt = (wei: string) => {
     try { return ethers.formatEther(wei); } catch { return wei; }

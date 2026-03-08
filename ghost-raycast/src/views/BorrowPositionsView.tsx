@@ -26,6 +26,7 @@ export function BorrowPositionsView({ wallet }: { wallet: WalletData }) {
   const [isLoading, setIsLoading] = useState(true);
 
   async function load() {
+    if (!wallet?.address) return;
     setIsLoading(true);
     try {
       setData(await fetchBorrowerStatus(wallet.address));
@@ -41,7 +42,7 @@ export function BorrowPositionsView({ wallet }: { wallet: WalletData }) {
   }, []);
 
   const ts = () => Math.floor(Date.now() / 1000);
-  const signer = new ethers.Wallet(wallet.privateKey);
+  const signer = wallet?.privateKey ? new ethers.Wallet(wallet.privateKey) : null;
 
   async function signAndCall(
     types: Record<string, ethers.TypedDataField[]>,
@@ -51,6 +52,7 @@ export function BorrowPositionsView({ wallet }: { wallet: WalletData }) {
   ) {
     const toast = await showToast(Toast.Style.Animated, label);
     try {
+      if (!signer) throw new Error("Wallet not loaded");
       const auth = await signer.signTypedData(GHOST_DOMAIN, types, message);
       await apiCall({ ...message, auth });
       toast.style = Toast.Style.Success;

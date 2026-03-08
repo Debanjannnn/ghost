@@ -154,6 +154,7 @@ ghostRoute.get("/lender-status/:address", async (c: Context) => {
     } else {
       completedLoans.push({
         loanId: loan.loanId,
+        token: loan.token,
         principal: lenderPrincipal.toString(),
         rate: weightedRate,
         status: loan.status,
