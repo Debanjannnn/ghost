@@ -5,8 +5,7 @@ import { motion } from "framer-motion";
 
 const features = [
   {
-    badge: "Sealed Bids",
-    badgeDot: "bg-emerald-500",
+
     title: "Private Rate Discovery",
     desc: "Lenders submit encrypted rates that only Chainlink CRE can decrypt. No front-running, no manipulation.",
     thumbnail: "/thumbnail1.png",
@@ -14,8 +13,7 @@ const features = [
     hoverBg: "group-hover:bg-[#e2a9f1]",
   },
   {
-    badge: "Discriminatory Pricing",
-    badgeDot: "bg-orange-500",
+
     title: "Fair Yield For Every Lender",
     desc: "Each lender earns their own bid rate — no uniform clearing price. You set your rate, you earn your rate.",
     thumbnail: "/thumbnail2.png",
@@ -23,8 +21,7 @@ const features = [
     hoverBg: "group-hover:bg-[#f5c882]",
   },
   {
-    badge: "Confidential Compute",
-    badgeDot: "bg-indigo-500",
+
     title: "CRE-Powered Settlement",
     desc: "Matching, validation, and fund disbursement happen inside Chainlink's confidential runtime. Trustless and atomic.",
     thumbnail: "/thumbnail3.png",
@@ -32,8 +29,7 @@ const features = [
     hoverBg: "group-hover:bg-[#a5b4fc]",
   },
   {
-    badge: "Compliant Privacy",
-    badgeDot: "bg-purple-500",
+
     title: "Shielded Transfers",
     desc: "All fund movements use Chainlink's Compliant Private Transfer vault. Private by default, compliant by design.",
     thumbnail: "/thumbnail4.png",
@@ -77,11 +73,6 @@ export default function Features() {
             >
               {/* Visual area */}
               <div className={`relative aspect-[4/3] ${f.visualBg} overflow-hidden p-5`}>
-                {/* Badge pill — top right */}
-                <div className="absolute top-4 right-4 z-10 inline-flex items-center gap-2 bg-[#101010]/70 backdrop-blur-sm rounded-full px-3.5 py-1.5 border border-white/[0.08]">
-                  <span className={`w-2 h-2 rounded-full ${f.badgeDot}`} />
-                  <span className="text-xs font-medium text-white">{f.badge}</span>
-                </div>
                 {/* Bordered thumbnail container */}
                 <div className={`w-full h-full rounded-2xl border border-white/[0.08] overflow-hidden flex items-center justify-center bg-[#161616] ${f.hoverBg} transition-colors duration-300`}>
                   <img
