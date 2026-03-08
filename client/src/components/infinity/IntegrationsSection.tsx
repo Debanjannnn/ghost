@@ -1,28 +1,23 @@
 const categories = [
   {
-    title: "Borrow/Lend",
-    description: "Use INF as collateral to borrow assets or earn interest by lending.",
-    icons: ["bg-blue-600", "bg-indigo-600", "bg-teal-500", "bg-pink-500", "bg-emerald-500", "bg-green-600"],
+    title: "Borrow",
+    description: "Submit a borrow intent with encrypted max rate. Deposit collateral based on your credit tier.",
   },
   {
-    title: "Trading",
-    description: "Trade INF on top-tier DEXs.",
-    icons: ["bg-pink-600", "bg-emerald-500"],
+    title: "Lend",
+    description: "Deposit gUSD at your chosen rate. Your rate is sealed — only Chainlink CRE can read it.",
   },
   {
-    title: "Provide Liquidity",
-    description: "Earn rewards by supplying liquidity to decentralized pools.",
-    icons: ["bg-zinc-700", "bg-rose-500", "bg-orange-500", "bg-emerald-600", "bg-purple-600"],
+    title: "Rate Discovery",
+    description: "CRE decrypts all rates, builds a tick book, and matches borrowers to the cheapest available lenders.",
   },
   {
-    title: "Vaults",
-    description: "Earn yield by putting your INF to work.",
-    icons: ["bg-blue-500", "bg-teal-400"],
+    title: "Settlement",
+    description: "Matched loans are settled on-chain via the vault. Collateral is locked, funds are transferred privately.",
   },
   {
-    title: "Leveraged Staking",
-    description: "Multiply your yield by staking INF with leverage.",
-    icons: ["bg-cyan-500"],
+    title: "Repayment & Credit",
+    description: "Repay loans to improve your credit tier. Higher tiers unlock lower collateral requirements.",
   },
 ];
 
@@ -32,13 +27,13 @@ const IntegrationsSection = () => {
       <div className="flex flex-col lg:flex-row gap-10 items-start">
         {/* Left */}
         <div className="flex-1 max-w-sm space-y-4">
-          <span className="text-sm font-semibold text-emerald-400">Integrated</span>
+          <span className="text-sm font-semibold text-emerald-400">Protocol Flow</span>
           <h2 className="text-3xl font-semibold text-foreground leading-tight">
-            Over 15+ DeFi Integrations
+            End-to-End Lending Pipeline
           </h2>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            With integrations across top DeFi apps, INF gives you more ways to earn,
-            trade, and maximize rewards.
+            From intent submission to loan settlement, every step is designed
+            for privacy, fairness, and trustless execution.
           </p>
         </div>
 
@@ -51,16 +46,7 @@ const IntegrationsSection = () => {
                 <p className="text-xs text-muted-foreground">{cat.description}</p>
               </div>
               <div className="flex items-center gap-2 flex-shrink-0 flex-wrap justify-end max-w-[180px]">
-                {cat.icons.map((color, i) => (
-                  <div
-                    key={i}
-                    className={`h-9 w-9 rounded-full ${color} flex items-center justify-center`}
-                  >
-                    <span className="text-white text-xs font-medium">
-                      {cat.title[0]}
-                    </span>
-                  </div>
-                ))}
+               
               </div>
             </div>
           ))}

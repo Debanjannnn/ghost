@@ -1,9 +1,0 @@
-name: ghost-liquidation-monitor
-version: "0.1.0"
-description: "Monitors loan health via GHOST API (pure HTTP trigger)"
-trigger:
-  type: cron
-  schedule: "*/60 * * * * *"
-capabilities:
-  - confidential-http
-  - vault-don-secrets

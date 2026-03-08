@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { motion } from "motion/react";
 
-const tabs = ["Stake", "Swap", "Migrate", "Unstake"];
+const tabs = ["Borrow", "Lend", "Swap", "Status"];
 
 interface TabSwitcherProps {
   activeTab: string;
@@ -16,13 +16,20 @@ const TabSwitcher = ({ activeTab, onTabChange }: TabSwitcherProps) => {
         <button
           key={tab}
           onClick={() => onTabChange(tab)}
-          className={`flex-1 px-6 py-2 rounded-full text-sm font-medium transition-colors cursor-pointer ${
+          className={`relative flex-1 px-6 py-2 rounded-full text-sm font-medium transition-colors cursor-pointer ${
             activeTab === tab
-              ? "bg-muted text-foreground"
+              ? "text-foreground"
               : "text-muted-foreground hover:text-foreground"
           }`}
         >
-          {tab}
+          {activeTab === tab && (
+            <motion.div
+              layoutId="tab-pill"
+              className="absolute inset-0 bg-muted rounded-full"
+              transition={{ type: "spring", stiffness: 400, damping: 30 }}
+            />
+          )}
+          <span className="relative z-10">{tab}</span>
         </button>
       ))}
     </div>
