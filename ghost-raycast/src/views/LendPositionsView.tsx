@@ -10,6 +10,7 @@ export function LendPositionsView({ wallet }: { wallet: WalletData }) {
   const [isLoading, setIsLoading] = useState(true);
 
   async function load() {
+    if (!wallet?.address) return;
     setIsLoading(true);
     try {
       const d = await fetchLenderStatus(wallet.address);
