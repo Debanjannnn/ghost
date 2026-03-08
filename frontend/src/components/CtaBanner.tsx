@@ -15,12 +15,6 @@ export default function CtaBanner() {
             Explore the product
             <ArrowRight className="w-4 h-4" />
           </button>
-          <div className="mt-4">
-            <a href="#" className="inline-flex items-center gap-1.5 text-sm font-medium text-white hover:text-gray-300 transition-colors">
-              Talk to an expert
-              <ArrowRight className="w-3.5 h-3.5" />
-            </a>
-          </div>
         </div>
       </div>
     </section>
