@@ -11,6 +11,7 @@
 ## 1. Why a Custom Vault
 
 The current Chainlink Compliant Private Transfer vault provides:
+
 - ERC20 deposit/withdraw
 - Private transfers (off-chain balance ledger)
 - Shielded addresses
@@ -18,6 +19,7 @@ The current Chainlink Compliant Private Transfer vault provides:
 - Withdrawal tickets (signed by off-chain API, redeemed on-chain)
 
 What it does NOT provide (and GHOST needs):
+
 - On-chain collateral locking with programmatic release conditions
 - Liquidation hooks that CRE can call atomically
 - Interest accrual tracked at the vault level
@@ -48,45 +50,45 @@ where CRE can interact with it via EVMClient.
   │  └────────┬────────────┘    └──────────┬───────────┘                 │
   │           │                            │                             │
   │  ┌────────┴────────────────────────────┴───────────┐                 │
-  │  │           GhostLoanLedger.sol                    │                 │
-  │  │                                                  │                 │
-  │  │  createLoan()      — CRE-signed attestation      │                 │
-  │  │  recordRepayment() — CRE confirms repay          │                 │
-  │  │  markDefaulted()   — CRE triggers liquidation    │                 │
-  │  │  getLoanHealth()   — view, anyone can verify     │                 │
-  │  │                                                  │                 │
-  │  │  Stores: loanId => {principal, collateral,       │                 │
-  │  │          maturity, status, repaid}               │                 │
-  │  │  Does NOT store: rates, matched ticks, lender    │                 │
-  │  │          identities (privacy preserved)          │                 │
-  │  └──────────────────────────────────────────────────┘                 │
+  │  │           GhostLoanLedger.sol                   │                 │
+  │  │                                                 │                 │
+  │  │  createLoan()      — CRE-signed attestation     │                 │
+  │  │  recordRepayment() — CRE confirms repay         │                 │
+  │  │  markDefaulted()   — CRE triggers liquidation   │                 │
+  │  │  getLoanHealth()   — view, anyone can verify    │                 │
+  │  │                                                 │                 │
+  │  │  Stores: loanId => {principal, collateral,      │                 │
+  │  │          maturity, status, repaid}              │                 │
+  │  │  Does NOT store: rates, matched ticks, lender   │                 │
+  │  │          identities (privacy preserved)         │                 │
+  │  └─────────────────────────────────────────────────┘                 │
   │                                                                      │
-  │  ┌──────────────────────┐    ┌──────────────────────┐                 │
+  │  ┌─────────────────────┐    ┌──────────────────────┐                 │
   │  │  GhostPolicyEngine  │    │  InterestAccrual.sol │                 │
   │  │  .sol               │    │                      │                 │
   │  │                     │    │  computeInterest()   │                 │
   │  │  extends Chainlink  │    │  per-second compound │                 │
   │  │  PolicyEngine       │    │  view-only helper    │                 │
   │  │  + lending rules    │    └──────────────────────┘                 │
-  │  └──────────────────────┘                                            │
+  │  └─────────────────────┘                                             │
   └──────────────────────────────────────────────────────────────────────┘
 
                                OFF-CHAIN
   ┌──────────────────────────────────────────────────────────────────────┐
   │                                                                      │
-  │  ┌─────────────────┐   ┌──────────────────┐   ┌─────────────────┐   │
-  │  │  GHOST Server   │   │  CRE Workflows   │   │  Private Xfer   │   │
-  │  │  (Hono + Bun)   │   │  (Chainlink)     │   │  API Layer      │   │
-  │  │                 │   │                  │   │                 │   │
-  │  │  Encrypted      │   │  settle-loans    │   │  Balances       │   │
-  │  │  rate storage   │   │  check-loans     │   │  Shielded addrs │   │
-  │  │  Tick book      │   │  execute-xfers   │   │  Private xfers  │   │
-  │  │  Match state    │   │  vault-sync      │   │  Withdraw tix   │   │
-  │  │  Credit scores  │   │  (NEW)           │   │                 │   │
-  │  └────────┬────────┘   └────────┬─────────┘   └────────┬────────┘   │
-  │           │                     │                       │            │
-  │           └─────────────────────┴───────────────────────┘            │
-  │                    ConfidentialHTTPClient + EVMClient                 │
+  │  ┌─────────────────┐   ┌──────────────────┐   ┌─────────────────┐    │
+  │  │  GHOST Server   │   │  CRE Workflows   │   │  Private Xfer   │    │
+  │  │  (Hono + Bun)   │   │  (Chainlink)     │   │  API Layer      │    │
+  │  │                 │   │                  │   │                 │    │
+  │  │  Encrypted      │   │  settle-loans    │   │  Balances       │    │
+  │  │  rate storage   │   │  check-loans     │   │  Shielded addrs │    │
+  │  │  Tick book      │   │  execute-xfers   │   │  Private xfers  │    │
+  │  │  Match state    │   │  vault-sync      │   │  Withdraw tix   │    │
+  │  │  Credit scores  │   │  (NEW)           │   │                 │    │
+  │  └────────┬────────┘   └────────┬─────────┘   └────────┬────────┘    │
+  │           │                     │                      │             │
+  │           └─────────────────────┴──────────────────────┘             │
+  │                    ConfidentialHTTPClient + EVMClient                │
   └──────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -96,40 +98,40 @@ where CRE can interact with it via EVMClient.
 
 ### MUST be on-chain
 
-| Data / Operation              | Why                                             |
-|-------------------------------|--------------------------------------------------|
-| ERC20 deposit into vault      | Token custody, verifiable by anyone               |
-| ERC20 withdraw from vault     | Token release, needs ticket + policy check        |
-| Collateral lock amounts       | Must be immutable during loan — CRE + borrower    |
-|                               | need guarantee funds cannot be withdrawn           |
-| Collateral release/liquidate  | Atomic — either collateral goes to borrower or     |
-|                               | lenders, no race conditions                       |
-| Loan existence + status       | Verifiable proof a loan exists, its principal,     |
-|                               | collateral, maturity, and current status           |
-| PolicyEngine checks           | Compliance on deposit/withdraw                    |
-| Emergency pause state         | Must be on-chain to block contract interactions    |
+| Data / Operation             | Why                                             |
+| ---------------------------- | ----------------------------------------------- |
+| ERC20 deposit into vault     | Token custody, verifiable by anyone             |
+| ERC20 withdraw from vault    | Token release, needs ticket + policy check      |
+| Collateral lock amounts      | Must be immutable during loan — CRE + borrower  |
+|                              | need guarantee funds cannot be withdrawn        |
+| Collateral release/liquidate | Atomic — either collateral goes to borrower or  |
+|                              | lenders, no race conditions                     |
+| Loan existence + status      | Verifiable proof a loan exists, its principal,  |
+|                              | collateral, maturity, and current status        |
+| PolicyEngine checks          | Compliance on deposit/withdraw                  |
+| Emergency pause state        | Must be on-chain to block contract interactions |
 
 ### MUST stay off-chain
 
-| Data / Operation              | Why                                             |
-|-------------------------------|--------------------------------------------------|
-| Encrypted rates               | Only CRE should decrypt — on-chain = public       |
-| Lender identities per loan    | Privacy: who lent to whom must remain hidden      |
-| Individual tick rates          | Discriminatory pricing is private                  |
-| Matching engine logic          | Runs in CRE confidential compute                  |
-| Private transfer balances     | Core privacy feature — off-chain ledger            |
-| Credit scores / tiers         | Server-side reputation, not consensus-critical     |
+| Data / Operation           | Why                                            |
+| -------------------------- | ---------------------------------------------- |
+| Encrypted rates            | Only CRE should decrypt — on-chain = public    |
+| Lender identities per loan | Privacy: who lent to whom must remain hidden   |
+| Individual tick rates      | Discriminatory pricing is private              |
+| Matching engine logic      | Runs in CRE confidential compute               |
+| Private transfer balances  | Core privacy feature — off-chain ledger        |
+| Credit scores / tiers      | Server-side reputation, not consensus-critical |
 
 ### Hybrid (on-chain anchor, off-chain detail)
 
-| Data / Operation              | On-chain                   | Off-chain                |
-|-------------------------------|----------------------------|--------------------------|
-| Loan creation                 | loanId, principal,         | matchedTicks[], rates,   |
-|                               | collateral, maturity,      | lender addresses, blended|
-|                               | borrower (hashed), status  | rate                     |
-| Repayment                     | repaid flag + amount       | Per-lender distribution  |
-| Interest                      | Aggregate rate (blended)   | Per-tick discriminatory  |
-|                               | for health checks          | rates                    |
+| Data / Operation | On-chain                  | Off-chain                 |
+| ---------------- | ------------------------- | ------------------------- |
+| Loan creation    | loanId, principal,        | matchedTicks[], rates,    |
+|                  | collateral, maturity,     | lender addresses, blended |
+|                  | borrower (hashed), status | rate                      |
+| Repayment        | repaid flag + amount      | Per-lender distribution   |
+| Interest         | Aggregate rate (blended)  | Per-tick discriminatory   |
+|                  | for health checks         | rates                     |
 
 ---
 
@@ -200,6 +202,7 @@ Storage:
 
 Minimal on-chain loan state. Does NOT store who the lenders are
 (that stays off-chain for privacy). Stores enough for:
+
 - Collateral health verification (anyone can call getLoanHealth)
 - CRE to trigger liquidation with on-chain proof
 - Borrower to verify their loan terms
@@ -239,6 +242,7 @@ Storage:
 ### 4.4 GhostPolicyEngine.sol — Lending-Aware Compliance
 
 Extends the Chainlink ACE PolicyEngine with lending-specific rules:
+
 - Borrowers with defaulted loans cannot withdraw collateral tokens
 - Locked collateral cannot be withdrawn even with a valid ticket
 - KYC/AML checks delegated to base PolicyEngine
@@ -895,17 +899,18 @@ function createLoanBatch(
 
 The primary gas optimization is architectural: store the minimum on-chain.
 
-| Data                    | On-chain cost if stored | Our approach              |
-|-------------------------|------------------------|---------------------------|
-| Individual lender rates | ~20,000 gas per tick   | Off-chain only            |
-| Lender addresses        | ~20,000 gas per lender | Off-chain only            |
-| Match proposals         | ~50,000 gas per        | Off-chain only            |
-| Credit scores           | ~20,000 gas per update | Off-chain only            |
-| Transfer history        | ~40,000 gas per        | Off-chain only            |
-| Loan aggregate record   | ~100,000 gas per loan  | On-chain (necessary)      |
-| Collateral lock         | ~60,000 gas per lock   | On-chain (necessary)      |
+| Data                    | On-chain cost if stored | Our approach         |
+| ----------------------- | ----------------------- | -------------------- |
+| Individual lender rates | ~20,000 gas per tick    | Off-chain only       |
+| Lender addresses        | ~20,000 gas per lender  | Off-chain only       |
+| Match proposals         | ~50,000 gas per         | Off-chain only       |
+| Credit scores           | ~20,000 gas per update  | Off-chain only       |
+| Transfer history        | ~40,000 gas per         | Off-chain only       |
+| Loan aggregate record   | ~100,000 gas per loan   | On-chain (necessary) |
+| Collateral lock         | ~60,000 gas per lock    | On-chain (necessary) |
 
 Estimated gas per loan lifecycle:
+
 - Lock collateral: ~60,000
 - Create loan: ~100,000
 - Record repayment: ~30,000
